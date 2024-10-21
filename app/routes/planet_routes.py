@@ -13,7 +13,7 @@ def get_all_planets():
 @planets_bp.get("/<planet_id>")
 def get_one_planet(planet_id):
     planet = validate_planet(planet_id)
-    return to_dict(planet)
+    return to_dict(planet), 200
     
 
 def validate_planet(planet_id):
@@ -30,13 +30,5 @@ def validate_planet(planet_id):
     response = {"message": f"{planet_id} is not found"}
     abort(make_response(response, 404))
 
-
-def to_dict(self):
-    return {
-                "id": self.id,
-                "name": self.name,
-                "description": self.description,
-                "galaxy": self.galaxy
-            }
 
     

@@ -7,6 +7,16 @@ class Planet:
         self.name = name
         self.description = description
         self.galaxy = galaxy
+
+    def to_dict(self):
+        return {
+                "id": self.id,
+                "name": self.name,
+                "description": self.description,
+                "galaxy": self.galaxy
+            }
+
+
 mercury = Planet(1,"Mercury","first planet from the sun","Milkyway")
 venus = Planet(2,"Venus","second planet from the sun, hottest planet","Milkyway")
 earth = Planet(3,"Earth","HOME PLANET","Milkyway")
