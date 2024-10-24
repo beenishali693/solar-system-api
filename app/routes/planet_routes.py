@@ -7,13 +7,13 @@ planets_bp = Blueprint("planets_bp",__name__,url_prefix="/planets")
 def get_all_planets():
     planets_response = []
     for planet in planets:
-        planets_response.append(to_dict(planet))
+        planets_response.append(planet.to_dict())
     return planets_response
 
 @planets_bp.get("/<planet_id>")
 def get_one_planet(planet_id):
     planet = validate_planet(planet_id)
-    return to_dict(planet), 200
+    return planet.to_dict()
     
 
 def validate_planet(planet_id):
@@ -29,6 +29,4 @@ def validate_planet(planet_id):
     
     response = {"message": f"{planet_id} is not found"}
     abort(make_response(response, 404))
-
-
     
