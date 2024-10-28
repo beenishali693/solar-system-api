@@ -1,31 +1,51 @@
-from flask import Blueprint, make_response, abort
-from ..models.planet import planets
+from flask import Blueprint, make_response, abort, request
+from app.models.planet import Planet
+from ..db import db
 
 planets_bp = Blueprint("planets_bp",__name__,url_prefix="/planets")
 
+@planets_bp.post("")
+def create_planet():
+    request_body = request.get_json()
+    name = request_body["name"]
+    description = request_body["description"]
+    galaxy = request_body["galaxy"]
+
+    new_planet = Planet(name=name, description=description, galaxy=galaxy)
+    db.session.add(new_planet)
+    db.session.commit()
+
+    response = new_planet.to_dict()
+
+    return response, 201
+
+
 @planets_bp.get("")
 def get_all_planets():
+    query = db.select(Planet).order_by(Planet.id)
+    planets = db.session.scalars(query)
+
     planets_response = []
     for planet in planets:
         planets_response.append(planet.to_dict())
     return planets_response
 
-@planets_bp.get("/<planet_id>")
-def get_one_planet(planet_id):
-    planet = validate_planet(planet_id)
-    return planet.to_dict(),200
+# @planets_bp.get("/<planet_id>")
+# def get_one_planet(planet_id):
+#     planet = validate_planet(planet_id)
+#     return planet.to_dict(),200
     
 
-def validate_planet(planet_id):
-    try:
-        planet_id = int(planet_id)
-    except: 
-        response = {"message": f"{planet_id} is not valid"}
-        abort(make_response(response, 400))
+# def validate_planet(planet_id):
+#     try:
+#         planet_id = int(planet_id)
+#     except: 
+#         response = {"message": f"{planet_id} is not valid"}
+#         abort(make_response(response, 400))
 
-    for planet in planets:
-        if planet_id == planet.id:
-            return planet
+#     for planet in planets:
+#         if planet_id == planet.id:
+#             return planet
     
-    response = {"message": f"{planet_id} is not found"}
-    abort(make_response(response, 404))
+#     response = {"message": f"{planet_id} is not found"}
+#     abort(make_response(response, 404))
