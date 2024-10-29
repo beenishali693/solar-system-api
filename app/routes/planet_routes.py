@@ -30,22 +30,33 @@ def get_all_planets():
         planets_response.append(planet.to_dict())
     return planets_response
 
+@planets_bp.get("/<planet_id>")
+def get_one_planet(planet_id):
+
+    planet = validate_planet(planet_id)
+
+    return planet.to_dict()
+
+
+
 # @planets_bp.get("/<planet_id>")
 # def get_one_planet(planet_id):
 #     planet = validate_planet(planet_id)
 #     return planet.to_dict(),200
     
 
-# def validate_planet(planet_id):
-#     try:
-#         planet_id = int(planet_id)
-#     except: 
-#         response = {"message": f"{planet_id} is not valid"}
-#         abort(make_response(response, 400))
+def validate_planet(planet_id):
+    try:
+        planet_id = int(planet_id)
+    except: 
+        response = {"message": f"{planet_id} is not valid"}
+        abort(make_response(response, 400))
 
-#     for planet in planets:
-#         if planet_id == planet.id:
-#             return planet
+    query = db.select(Planet).where(Planet.id == planet_id)
+    planet = db.session.scalar(query)
+
+    if not planet:
+        response = {"message": f"{planet_id} is not found"}
+        abort(make_response(response, 404))
     
-#     response = {"message": f"{planet_id} is not found"}
-#     abort(make_response(response, 404))
+    return planet
