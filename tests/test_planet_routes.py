@@ -80,10 +80,9 @@ def test_create_one_planet_with_existing_records(client, two_saved_planets):
 
 def test_delete_one_planet_with_two_saved_planets(client, two_saved_planets):
     response = client.delete("/planets/1")
-    # count_response = client.get("/planets/count")
-    # response_body = count_response.get_
-    # print(response_body)
+    count_response = client.get("/planets/count")
+    response_body = count_response.get_json()
     
 
     assert response.status_code == 204
-    # assert count_response == 1
+    assert response_body == {"count": 1}

@@ -48,7 +48,7 @@ def get_one_planet(planet_id):
 @planets_bp.get("/count")
 def get_count():
     query = db.session.query(Planet.name).count()
-    return str(query)
+    return {"count" : query}
 
 @planets_bp.put("/<planet_id>")
 def update_planet(planet_id):
