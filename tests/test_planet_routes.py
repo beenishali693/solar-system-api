@@ -7,7 +7,14 @@ def test_get_all_planets_with_no_records(client):
     assert response.status_code == 200
     assert response_body == []
 
-def test_get_one_planet(client, two_saved_planets):
+def test_get_one_planet_with_no_records_returns_404(client):
+    #Act
+    response = client.get("/planets/1")
+
+    #Assert
+    assert response.status_code == 404
+
+def test_get_one_planet_with_records_successful(client, two_saved_planets):
     #Act
     response = client.get("/planets/1")
     response_body = response.get_json()
@@ -20,6 +27,7 @@ def test_get_one_planet(client, two_saved_planets):
         "description": "A vibrant blue and green planet, known for its diverse ecosystems and human inhabitants.",
         "galaxy":"Milky Way"
     }
+
 
 def test_get_all_planets_returns_all_records(client, two_saved_planets):
     #Act
@@ -42,7 +50,7 @@ def test_get_all_planets_returns_all_records(client, two_saved_planets):
         }
     ]
 
-def test_create_one_planet(client):
+def test_create_one_planet_with_no_records(client):
     #Act
     response = client.post("/planets", json={
     "name": "Jupiter",
