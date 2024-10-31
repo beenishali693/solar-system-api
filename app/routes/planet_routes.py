@@ -45,6 +45,11 @@ def get_one_planet(planet_id):
     planet = validate_planet(planet_id)
     return planet.to_dict()
 
+@planets_bp.get("/count")
+def get_count():
+    query = db.session.query(Planet.name).count()
+    return str(query)
+
 @planets_bp.put("/<planet_id>")
 def update_planet(planet_id):
     planet = validate_planet(planet_id)
