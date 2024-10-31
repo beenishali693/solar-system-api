@@ -5,6 +5,7 @@ from flask.signals import request_finished
 from dotenv import load_dotenv
 import os
 from app.models.planet import Planet
+
 load_dotenv()
 
 @pytest.fixture

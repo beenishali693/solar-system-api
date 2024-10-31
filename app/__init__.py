@@ -3,7 +3,7 @@ from .db import db, migrate
 from .models import planet
 from .routes.planet_routes import planets_bp
 import os
-import os
+
 
 def create_app(config=None):
     app = Flask(__name__)
