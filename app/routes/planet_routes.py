@@ -1,7 +1,7 @@
 from flask import Blueprint, make_response, abort, request, Response
 from app.models.planet import Planet
 from ..db import db
-
+from .route_utilities import validate_model
 planets_bp = Blueprint("planets_bp",__name__,url_prefix="/planets")
 
 @planets_bp.post("")
@@ -44,7 +44,7 @@ def get_all_planets():
 
 @planets_bp.get("/<planet_id>")
 def get_one_planet(planet_id):
-    planet = validate_planet(planet_id)
+    planet = validate_model(Planet,planet_id)
     return planet.to_dict()
 
 @planets_bp.get("/count")
@@ -54,7 +54,7 @@ def get_count():
 
 @planets_bp.put("/<planet_id>")
 def update_planet(planet_id):
-    planet = validate_planet(planet_id)
+    planet = validate_model(Planet,planet_id)
     request_body = request.get_json()
 
     planet.name = request_body["name"]
@@ -67,24 +67,9 @@ def update_planet(planet_id):
 
 @planets_bp.delete("/<planet_id>")
 def delete_planet(planet_id):
-    planet = validate_planet(planet_id)
+    planet = validate_model(Planet,planet_id)
     db.session.delete(planet)
     db.session.commit()
 
     return Response(status=204, mimetype="application/json")  
 
-def validate_planet(planet_id):
-    try:
-        planet_id = int(planet_id)
-    except: 
-        response = {"message": f"{planet_id} is not valid"}
-        abort(make_response(response, 400))
-
-    query = db.select(Planet).where(Planet.id == planet_id)
-    planet = db.session.scalar(query)
-
-    if not planet:
-        response = {"message": f"{planet_id} is not found"}
-        abort(make_response(response, 404))
-    
-    return planet
