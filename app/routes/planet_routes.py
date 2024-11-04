@@ -7,17 +7,25 @@ planets_bp = Blueprint("planets_bp",__name__,url_prefix="/planets")
 @planets_bp.post("")
 def create_planet():
     request_body = request.get_json()
-    name = request_body["name"]
-    description = request_body["description"]
-    galaxy = request_body["galaxy"]
+    # name = request_body["name"]
+    # description = request_body["description"]
+    # galaxy = request_body["galaxy"]
 
-    new_planet = Planet(name=name, description=description, galaxy=galaxy)
-    db.session.add(new_planet)
-    db.session.commit()
+    # new_planet = Planet(name=name, description=description, galaxy=galaxy)
+    try:
+        new_planet = Planet.from_dict(request_body)
 
-    response = new_planet.to_dict()
+        db.session.add(new_planet)
+        db.session.commit()
 
-    return response, 201
+        response = new_planet.to_dict()
+        return response, 201
+    
+    except KeyError as e:
+        response = {"message": f"Invalid request: missing {e.args[0]}"}
+        abort(make_response(response, 400))
+
+
 
 
 @planets_bp.get("")
